@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteSingleTodo = exports.getUserTodos = exports.singleTodo = exports.getTodos = exports.updatePost = exports.createPost = void 0;
+exports.deleteSinglePost = exports.getUserPost = exports.singlePost = exports.getPost = exports.updatePost = exports.createPost = void 0;
 const utils_1 = require("../utils/utils");
 const BlogPostModel_1 = __importDefault(require("../model/BlogPostModel"));
 const cloudinary_1 = require("cloudinary");
@@ -59,10 +59,10 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (validateUser.error) {
             res.status(400).json({ Error: validateUser.error.details[0].message });
         }
-        const todo = yield BlogPostModel_1.default.findById({ _id: id });
-        if (!todo) {
+        const Post = yield BlogPostModel_1.default.findById({ _id: id });
+        if (!Todo) {
             return res.status(400).json({
-                error: "Todo not found",
+                error: "Post not found",
             });
         }
         const updateRecord = yield BlogPostModel_1.default.findByIdAndUpdate(id, Object.assign(Object.assign({}, rest), { pictures }), {
@@ -72,11 +72,11 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
         if (!updateRecord) {
             return res.status(404).json({
-                msg: "Todo not updated",
+                msg: "Post not updated",
             });
         }
         return res.status(200).json({
-            message: "Todo updates successfully",
+            message: "Post updates successfully",
             updateRecord,
         });
     }
@@ -85,68 +85,68 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.updatePost = updatePost;
-const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const getAllUserTodos = yield BlogPostModel_1.default.find().populate("user");
+        const getAllUserPost = yield BlogPostModel_1.default.find().populate("user");
         res.status(200).json({
-            msg: "Todos successfully fetched",
-            getAllUserTodos,
+            msg: "Post successfully fetched",
+            getAllUserPost,
         });
     }
     catch (error) {
         console.log(error);
     }
 });
-exports.getTodos = getTodos;
-const singleTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getPost = getPost;
+const singlePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const getsingleTodos = yield BlogPostModel_1.default.findById(id);
-        if (!getsingleTodos) {
+        const getsinglePost = yield BlogPostModel_1.default.findById(id);
+        if (!getsinglePost) {
             return res.status(400).json({
-                error: "todo not found",
+                error: "Post not found",
             });
         }
         res.status(200).json({
-            msg: "Todos successfully fetched",
-            getsingleTodos
+            msg: "Post successfully fetched",
+            getsinglePost
         });
     }
     catch (error) {
         console.log(error);
     }
 });
-exports.singleTodo = singleTodo;
-const getUserTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.singlePost = singlePost;
+const getUserPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { userId } = req.params;
-        const getAllUserTodos = yield BlogPostModel_1.default.find({ user: userId });
+        const getAllUserPost = yield BlogPostModel_1.default.find({ user: userId });
         res.status(200).json({
-            msg: "Todos successfully fetched",
-            getAllUserTodos,
+            msg: "Post successfully fetched",
+            getAllUserPost,
         });
     }
     catch (error) {
         console.log(error);
     }
 });
-exports.getUserTodos = getUserTodos;
-const deleteSingleTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getUserPost = getUserPost;
+const deleteSinglePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
         const deleteSingleRecord = yield BlogPostModel_1.default.findByIdAndDelete(id);
         if (!deleteSingleRecord) {
             return res.status(400).json({
-                error: "Todo not found",
+                error: "Post not found",
             });
         }
         res.status(200).json({
-            message: "Todo successfully deleted",
+            message: "Post successfully deleted",
             deleteSingleRecord
         });
     }
     catch (error) {
-        console.error("Problem deleting todo");
+        console.error("Problem deleting Todo");
     }
 });
-exports.deleteSingleTodo = deleteSingleTodo;
+exports.deleteSinglePost = deleteSinglePost;
