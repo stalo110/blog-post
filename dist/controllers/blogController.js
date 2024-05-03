@@ -60,7 +60,7 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(400).json({ Error: validateUser.error.details[0].message });
         }
         const Post = yield BlogPostModel_1.default.findById({ _id: id });
-        if (!Todo) {
+        if (!Post) {
             return res.status(400).json({
                 error: "Post not found",
             });

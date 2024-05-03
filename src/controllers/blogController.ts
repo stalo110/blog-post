@@ -51,7 +51,7 @@ export const updatePost = async (req: Request, res: Response) => {
 
     const Post = await Blog.findById({ _id: id });
 
-    if (!Todo) {
+    if (!Post) {
       return res.status(400).json({
         error: "Post not found",
       });
