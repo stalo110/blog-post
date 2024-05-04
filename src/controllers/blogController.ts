@@ -27,7 +27,7 @@ export const createPost = async (req: Request | any, res: Response) => {
     const newPost = await Blog.create({
       ...validateUser.value,
       user: verify._id,
-      pictures: links.join(","),
+      pictures: links,
     });
 
     return res

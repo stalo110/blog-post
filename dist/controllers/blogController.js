@@ -41,7 +41,7 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 return result.secure_url;
             })));
         }
-        const newPost = yield BlogPostModel_1.default.create(Object.assign(Object.assign({}, validateUser.value), { user: verify._id, pictures: links.join(",") }));
+        const newPost = yield BlogPostModel_1.default.create(Object.assign(Object.assign({}, validateUser.value), { user: verify._id, pictures: links }));
         return res
             .status(200)
             .json({ message: "Blog Post created successfully", newPost });
