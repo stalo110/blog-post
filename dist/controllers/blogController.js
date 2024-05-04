@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteSinglePost = exports.getUserPost = exports.singlePost = exports.getPost = exports.updatePost = exports.createPost = void 0;
 const utils_1 = require("../utils/utils");
 const BlogPostModel_1 = __importDefault(require("../model/BlogPostModel"));
+const userModel_1 = __importDefault(require("../model/userModel"));
 const cloudinary_1 = require("cloudinary");
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -109,7 +110,7 @@ const singlePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         res.status(200).json({
             msg: "Post successfully fetched",
-            getsinglePost
+            getsinglePost,
         });
     }
     catch (error) {
@@ -119,8 +120,15 @@ const singlePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.singlePost = singlePost;
 const getUserPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { userId } = req.params;
-        const getAllUserPost = yield BlogPostModel_1.default.find({ user: userId });
+        const { id } = req.params;
+        const user = yield userModel_1.default.findById(id);
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+        const getAllUserPost = yield BlogPostModel_1.default.find({ user: user._id });
+        if (getAllUserPost.length === 0) {
+            return res.status(404).json({ msg: "User has no post" });
+        }
         res.status(200).json({
             msg: "Post successfully fetched",
             getAllUserPost,
@@ -142,7 +150,7 @@ const deleteSinglePost = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
         res.status(200).json({
             message: "Post successfully deleted",
-            deleteSingleRecord
+            deleteSingleRecord,
         });
     }
     catch (error) {

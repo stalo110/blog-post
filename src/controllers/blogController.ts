@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
-import { creatBlogPostSchema, updateBlogPostSchema, option } from "../utils/utils";
+import {
+  creatBlogPostSchema,
+  updateBlogPostSchema,
+  option,
+} from "../utils/utils";
 import Blog from "../model/BlogPostModel";
+import User from "../model/userModel";
 import { v2 as cloudinaryV2 } from "cloudinary";
 
 export const createPost = async (req: Request | any, res: Response) => {
@@ -17,12 +22,13 @@ export const createPost = async (req: Request | any, res: Response) => {
     let links = [];
     if (Array.isArray(req.files) && req.files.length > 0) {
       // Upload images to Cloudinary and retrieve their URLs
-      links = await Promise.all(req.files.map(async (item: Record<string, any>) => {
-        const result = await cloudinaryV2.uploader.upload(item.path);
-        return result.secure_url;
-      }));
+      links = await Promise.all(
+        req.files.map(async (item: Record<string, any>) => {
+          const result = await cloudinaryV2.uploader.upload(item.path);
+          return result.secure_url;
+        })
+      );
     }
-
 
     const newPost = await Blog.create({
       ...validateUser.value,
@@ -56,11 +62,11 @@ export const updatePost = async (req: Request, res: Response) => {
         error: "Post not found",
       });
     }
-    const updateRecord = await Blog.findByIdAndUpdate(id,
+    const updateRecord = await Blog.findByIdAndUpdate(
+      id,
       {
         ...rest,
         pictures,
-    
       },
 
       {
@@ -111,7 +117,7 @@ export const singlePost = async (req: Request, res: Response) => {
     }
     res.status(200).json({
       msg: "Post successfully fetched",
-      getsinglePost
+      getsinglePost,
     });
   } catch (error) {
     console.log(error);
@@ -120,9 +126,18 @@ export const singlePost = async (req: Request, res: Response) => {
 
 export const getUserPost = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.params;
+    const { id } = req.params;
 
-    const getAllUserPost = await Blog.find({ user: userId });
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    const getAllUserPost = await Blog.find({ user: user._id });
+
+    if(getAllUserPost.length === 0){
+      return res.status(404).json({ msg: "User has no post" });
+    }
 
     res.status(200).json({
       msg: "Post successfully fetched",
@@ -133,13 +148,11 @@ export const getUserPost = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const deleteSinglePost = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const deleteSingleRecord = await Blog.findByIdAndDelete(id)
+    const deleteSingleRecord = await Blog.findByIdAndDelete(id);
     if (!deleteSingleRecord) {
       return res.status(400).json({
         error: "Post not found",
@@ -148,7 +161,7 @@ export const deleteSinglePost = async (req: Request, res: Response) => {
 
     res.status(200).json({
       message: "Post successfully deleted",
-      deleteSingleRecord
+      deleteSingleRecord,
     });
   } catch (error) {
     console.error("Problem deleting Todo");
